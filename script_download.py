@@ -27,6 +27,6 @@ def script_download():
     ys.download(output_path=caminho_destino, filename=f"{nome_arquivo}.mp4")
     print("Download concluído!")
 
-    return f"{caminho_destino}/{nome_arquivo}.mp4"
+    return f"{caminho_destino}\\{nome_arquivo}.mp4"
 
 path = script_download()
