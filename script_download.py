@@ -1,6 +1,6 @@
 from pytube import YouTube
 import os
-from moviepy.editor import VideoFileClip
+from moviepy.editor import VideoFileClip, clips_array
 import math
 
 def script_download():
@@ -29,6 +29,7 @@ def script_download():
     ys.download(output_path=caminho_destino, filename=f"{nome_arquivo}.mp4")
     print("Download concluído!")
 
+
     return f"{caminho_destino}\\{nome_arquivo}.mp4"
 
 
@@ -53,13 +54,13 @@ def cortar_video(path):
     # Sobreposição de 20 segundos do segmento anterior
     sobreposicao = 10
     
+
     segmentos = []
     inicio = 0
     i = 0
     while inicio < duracao_total:
         # Define o fim do segmento, garantindo que não ultrapasse a duração total do vídeo
         fim = min(inicio + duracao_segmento_max, duracao_total)
-        
         # Corta o segmento do vídeo
         segmento = clip.subclip(inicio, fim)
         
@@ -78,6 +79,50 @@ def cortar_video(path):
     
     return segmentos
 
+def juntar_videos(path, path_sat, duration):
+    # Carregar os vídeos
+    video1 = VideoFileClip(path)
+    video2 = VideoFileClip(path_sat)
+
+    # Verificar e ajustar a duração dos vídeos
+    video2 = video2.subclip(0, duration)
+
+    # Juntar os vídeos horizontalmente
+    final_video = clips_array([[video1, video2]])
+
+    path_final = "C:\\Users\\VH-vscode\\Desktop\\video_cortes"
+
+    # Salvar o vídeo resultante
+    final_video.write_videofile(path, codec="libx264", audio_codec="aac")
+
+def download_sat():
+    # Insira o link do vídeo que você deseja baixar
+        
+        link = input("Insira o link do vídeo: ")
+
+        # Criando um objeto YouTube com o link
+        yt = YouTube(link)
+
+        # Acessando a stream de maior resolução disponível
+        ys = yt.streams.get_highest_resolution()
+
+        # Solicitando ao usuário para inserir o nome do arquivo
+        nome_arquivo = input("Insira o nome do arquivo sem a extensão: ")
+
+        # Especificando o caminho de destino
+        caminho_destino = "C:\\Users\\VH-vscode\\Desktop\\video_sat"
+
+        # Verificando se o diretório existe, se não, cria o diretório
+        if not os.path.exists(caminho_destino):
+            os.makedirs(caminho_destino)
+
+        # Iniciando o download com o nome e caminho do arquivo especificados
+        print("Baixando...")
+        ys.download(output_path=caminho_destino, filename=f"{nome_arquivo}.mp4")
+        print("Download concluído!")
+
+        return f"{caminho_destino}\\{nome_arquivo}.mp4"
+
 # Exemplo de uso
 # path_do_video = "caminho_para_o_seu_video.mp4"
 # segmentos = cortar_video(path_do_video)
@@ -87,6 +132,12 @@ def cortar_video(path):
 # Exemplo de uso
 path = script_download()
 
+path_sat = download_sat()
+
+clip = VideoFileClip(path)
+duration = clip.duration
+
+juntar_videos(path, path_sat, duration)
 
 segmentos = cortar_video(path)
 print("Vídeos segmentados salvos em:", segmentos)
