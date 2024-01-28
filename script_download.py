@@ -3,7 +3,7 @@ import os
 from moviepy.editor import VideoFileClip, clips_array
 import math
 
-def script_download():
+def download():
 
     # Insira o link do vídeo que você deseja baixar
     link = input("Insira o link do vídeo: ")
@@ -130,7 +130,7 @@ def download_sat():
 
 
 # Exemplo de uso
-path = script_download()
+path = download()
 
 path_sat = download_sat()
 
