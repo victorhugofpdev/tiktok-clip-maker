@@ -18,7 +18,7 @@ def script_download():
     nome_arquivo = input("Insira o nome do arquivo sem a extensão: ")
 
     # Especificando o caminho de destino
-    caminho_destino = "C:\\Users\\VH-vscode\\Documents\\video_cortes"
+    caminho_destino = "C:\\Users\\VH-vscode\\Desktop\\video_cortes"
 
     # Verificando se o diretório existe, se não, cria o diretório
     if not os.path.exists(caminho_destino):
@@ -32,12 +32,11 @@ def script_download():
     return f"{caminho_destino}\\{nome_arquivo}.mp4"
 
 
-
 def cortar_video(path):
     # Extrai o nome base do vídeo sem a extensão
     nome_base = os.path.splitext(os.path.basename(path))[0]
     # Define o diretório de saída para os clipes
-    diretorio_saida = "clips"
+    diretorio_saida = "C:\\Users\\VH-vscode\\Desktop\\clips"
     
     # Cria o diretório se ele não existir
     if not os.path.exists(diretorio_saida):
@@ -49,21 +48,17 @@ def cortar_video(path):
     
     # Define a duração de cada segmento
     duracao_segmento_min = 60  # 1 minuto em segundos
-    duracao_segmento_max = 120  # 2 minutos em segundos
+    duracao_segmento_max = 130  # 2 minutos em segundos
     
-    # Calcula o número de segmentos baseado na duração máxima
-    numero_de_segmentos = math.ceil(duracao_total / duracao_segmento_max)
+    # Sobreposição de 20 segundos do segmento anterior
+    sobreposicao = 10
     
     segmentos = []
-    for i in range(numero_de_segmentos):
-        inicio = i * duracao_segmento_max
-        fim = inicio + duracao_segmento_max
-        if fim > duracao_total:
-            fim = duracao_total
-        
-        # Garante que cada segmento tenha pelo menos a duração mínima, ajustando se necessário
-        if fim - inicio < duracao_segmento_min:
-            inicio = fim - duracao_segmento_min
+    inicio = 0
+    i = 0
+    while inicio < duracao_total:
+        # Define o fim do segmento, garantindo que não ultrapasse a duração total do vídeo
+        fim = min(inicio + duracao_segmento_max, duracao_total)
         
         # Corta o segmento do vídeo
         segmento = clip.subclip(inicio, fim)
@@ -75,8 +70,19 @@ def cortar_video(path):
         segmento.write_videofile(nome_do_arquivo, codec="libx264")
         
         segmentos.append(nome_do_arquivo)
+        
+        # Atualiza o início do próximo segmento, reduzindo-o pelos 20 segundos de sobreposição
+        # exceto se for o fim do vídeo
+        inicio = fim - (sobreposicao if fim < duracao_total else 0)
+        i += 1
     
     return segmentos
+
+# Exemplo de uso
+# path_do_video = "caminho_para_o_seu_video.mp4"
+# segmentos = cortar_video(path_do_video)
+# print("Vídeos segmentados salvos em:", segmentos)
+
 
 # Exemplo de uso
 path = script_download()
