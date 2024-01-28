@@ -1,7 +1,7 @@
 from pytube import YouTube
 import os
 from moviepy.editor import VideoFileClip
-
+import math
 
 def script_download():
 
@@ -31,31 +31,62 @@ def script_download():
 
     return f"{caminho_destino}\\{nome_arquivo}.mp4"
 
+
+
+def cortar_video(path):
+    # Extrai o nome base do vídeo sem a extensão
+    nome_base = os.path.splitext(os.path.basename(path))[0]
+    # Define o diretório de saída para os clipes
+    diretorio_saida = "clips"
+    
+    # Cria o diretório se ele não existir
+    if not os.path.exists(diretorio_saida):
+        os.makedirs(diretorio_saida)
+    
+    # Carrega o vídeo
+    clip = VideoFileClip(path)
+    duracao_total = clip.duration
+    
+    # Define a duração de cada segmento
+    duracao_segmento_min = 60  # 1 minuto em segundos
+    duracao_segmento_max = 120  # 2 minutos em segundos
+    
+    # Calcula o número de segmentos baseado na duração máxima
+    numero_de_segmentos = math.ceil(duracao_total / duracao_segmento_max)
+    
+    segmentos = []
+    for i in range(numero_de_segmentos):
+        inicio = i * duracao_segmento_max
+        fim = inicio + duracao_segmento_max
+        if fim > duracao_total:
+            fim = duracao_total
+        
+        # Garante que cada segmento tenha pelo menos a duração mínima, ajustando se necessário
+        if fim - inicio < duracao_segmento_min:
+            inicio = fim - duracao_segmento_min
+        
+        # Corta o segmento do vídeo
+        segmento = clip.subclip(inicio, fim)
+        
+        # Define o nome do arquivo de saída
+        nome_do_arquivo = os.path.join(diretorio_saida, f"{nome_base}_parte_{i+1}.mp4")
+        
+        # Salva o segmento
+        segmento.write_videofile(nome_do_arquivo, codec="libx264")
+        
+        segmentos.append(nome_do_arquivo)
+    
+    return segmentos
+
+# Exemplo de uso
 path = script_download()
 
 
-def split_video(video_path, output_directory):
-    clip = VideoFileClip(video_path)
-    duration = clip.duration
-    min_duration = 60  # 1 minuto em segundos
-    max_duration = 120  # 2 minutos em segundos
-    start_time = 0
-    end_time = min_duration
+segmentos = cortar_video(path)
+print("Vídeos segmentados salvos em:", segmentos)
+    
 
-    video_number = 1
 
-    while end_time <= duration:
-        subclip = clip.subclip(start_time - 5, end_time)
-        subclip.write_videofile(os.path.join(output_directory, f'video_{video_number}.mp4'))
 
-        start_time = end_time - 5
-        end_time += min_duration
 
-        if end_time + min_duration > duration:
-            end_time = duration
 
-        video_number += 1
-
-    clip.close()
-
-os.path.join(output_directory, f'video_{video_number}.mp4')
