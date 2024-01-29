@@ -4,3 +4,4 @@ ppvcortes@gmail.com
 cortesppv@gmail.com
 
 cortesppv2@gmail.com
+pip install opencv-python numpy
