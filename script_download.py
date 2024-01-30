@@ -9,7 +9,7 @@ def download():
 
     # Insira o link do vídeo que você deseja baixar
     #link = input("Insira o link do vídeo: ")
-    lista_link = ['https://youtu.be/Db8baEWUzh8?si=rEWtYvcTJxN2JGGw']
+    lista_link = ['https://www.youtube.com/watch?v=XbmmTWSB6W4']
     lista_caminhos = []
     for link in lista_link:
     # Criando um objeto YouTube com o link
@@ -38,7 +38,40 @@ def download():
 
     return lista_caminhos
 
+def download_sat():
+    # Insira o link do vídeo que você deseja baixar
+        
+        #link = input("Insira o link do vídeo: ")
+    lista_link = ['https://www.youtube.com/watch?v=ebnQsTk9s-s']
+    lista_caminhos = []
+    for link in lista_link:
+            # Criando um objeto YouTube com o link
+            yt = YouTube(link)
+
+            # Acessando a stream de maior resolução disponível
+            ys = yt.streams.get_highest_resolution()
+
+            # Solicitando ao usuário para inserir o nome do arquivo
+            #nome_arquivo = input("Insira o nome do arquivo sem a extensão: ")
+            nome_arquivo = 'clip_sat_1'
+
+            # Especificando o caminho de destino
+            caminho_destino = "C:\\Users\\VH-vscode\\Desktop\\video_sat"
+
+            # Verificando se o diretório existe, se não, cria o diretório
+            if not os.path.exists(caminho_destino):
+                os.makedirs(caminho_destino)
+
+            # Iniciando o download com o nome e caminho do arquivo especificados
+            print("Baixando...")
+            ys.download(output_path=caminho_destino, filename=f"{nome_arquivo}.mp4")
+            print("Download concluído!")
+            lista_caminhos.append(f"{caminho_destino}\\{nome_arquivo}.mp4")
+
+    return lista_caminhos
+
 def cortar_video(path, path_sat):
+    adicional_de_duracao = 0
     # Extrai o nome base do vídeo sem a extensão
     nome_base = os.path.splitext(os.path.basename(path))[0]
     nome_base_sat = os.path.splitext(os.path.basename(path_sat))[0]
@@ -74,7 +107,7 @@ def cortar_video(path, path_sat):
         # Define o fim do segmento, garantindo que não ultrapasse a duração total do vídeo
         fim = min(inicio + duracao_segmento_max, duracao_total)
         # Corta o segmento do vídeo
-        segmento = clip.subclip(inicio, fim)
+        segmento = clip.subclip(inicio , fim )
         segmento_sat = clip_2.subclip(inicio+20, fim+20).without_audio()  # Removido o +20 para alinhamento correto
 
         # Define o nome do arquivo de saída
@@ -93,7 +126,12 @@ def cortar_video(path, path_sat):
         # Atualiza o início do próximo segmento, reduzindo-o pelos segundos de sobreposição
         inicio = fim - (sobreposicao if fim < duracao_total else 0)
         i += 1
-
+        '''if segmento.duration > duracao_segmento_min:
+            i += 1
+            continue
+        else:
+            adicional_de_duracao = segmento.duration/i
+            fim = fim + adicional_de_duracao '''  
     return lista_clips, lista_clips_sat, lista_audio_clips
 
 def juntar_video(path_, path_sat_, clips_audio_path_):
@@ -134,38 +172,6 @@ def juntar_video(path_, path_sat_, clips_audio_path_):
         out.release()
         audio_video(clips_audio_path, i)
         i += 1
-
-def download_sat():
-    # Insira o link do vídeo que você deseja baixar
-        
-        #link = input("Insira o link do vídeo: ")
-    lista_link = ['https://www.youtube.com/watch?app=desktop&v=tH0smbt5khk']
-    lista_caminhos = []
-    for link in lista_link:
-            # Criando um objeto YouTube com o link
-            yt = YouTube(link)
-
-            # Acessando a stream de maior resolução disponível
-            ys = yt.streams.get_highest_resolution()
-
-            # Solicitando ao usuário para inserir o nome do arquivo
-            #nome_arquivo = input("Insira o nome do arquivo sem a extensão: ")
-            nome_arquivo = 'clip_sat_1'
-
-            # Especificando o caminho de destino
-            caminho_destino = "C:\\Users\\VH-vscode\\Desktop\\video_sat"
-
-            # Verificando se o diretório existe, se não, cria o diretório
-            if not os.path.exists(caminho_destino):
-                os.makedirs(caminho_destino)
-
-            # Iniciando o download com o nome e caminho do arquivo especificados
-            print("Baixando...")
-            ys.download(output_path=caminho_destino, filename=f"{nome_arquivo}.mp4")
-            print("Download concluído!")
-            lista_caminhos.append(f"{caminho_destino}\\{nome_arquivo}.mp4")
-
-    return lista_caminhos
 
 def audio_video(clips_audio_path, i):
 
