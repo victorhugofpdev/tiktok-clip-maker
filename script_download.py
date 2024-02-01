@@ -9,7 +9,7 @@ def download():
 #'https://www.youtube.com/watch?v=FSIf6ZAFWyg','https://www.youtube.com/watch?v=6vgZm00MBUw'
     # Insira o link do vídeo que você deseja baixar
     #link = input("Insira o link do vídeo: ")
-    lista_link = []
+    lista_link = ['https://www.youtube.com/watch?v=FSIf6ZAFWyg']
     lista_caminhos = []
     for link in lista_link:
     # Criando um objeto YouTube com o link
@@ -203,7 +203,7 @@ lista_path_sat = download_sat()
 
 for path, path_sat in zip(lista_path, lista_path_sat):
     segmentos, segmentos_sat, clips_audio_path = cortar_video(path, path_sat)
-    #juntar_video(segmentos, segmentos_sat, clips_audio_path)
+    juntar_video(segmentos, segmentos_sat, clips_audio_path)
 
 
 
