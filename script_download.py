@@ -9,7 +9,7 @@ def download():
 #'https://www.youtube.com/watch?v=FSIf6ZAFWyg','https://www.youtube.com/watch?v=6vgZm00MBUw'
     # Insira o link do vídeo que você deseja baixar
     #link = input("Insira o link do vídeo: ")
-    lista_link = ['https://www.youtube.com/watch?v=FSIf6ZAFWyg']
+    lista_link = ['https://www.youtube.com/watch?v=6vgZm00MBUw']
     lista_caminhos = []
     for link in lista_link:
     # Criando um objeto YouTube com o link
