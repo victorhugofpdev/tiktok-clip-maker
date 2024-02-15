@@ -1,7 +1,6 @@
 from pytube import YouTube
 import os
-from moviepy.editor import VideoFileClip, CompositeVideoClip, AudioFileClip
-import math
+from moviepy.editor import VideoFileClip,AudioFileClip
 import cv2
 import numpy as np
 
